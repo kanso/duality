@@ -1,10 +1,10 @@
 /*global window: false, getRow: true, start: true, $: false, pageTracker: true,
-  kanso: true, log: true, console: true, send: true */
+  duality: true, log: true, console: true, send: true */
 
 /**
- * The core module contains functions used by kanso to facilitate the running
+ * The core module contains functions used by duality to facilitate the running
  * of your app. You shouldn't need to use any of the functions here directly
- * unless you're messing with the internals of Kanso.
+ * unless you're messing with the internals of the framework.
  *
  * @module
  */
@@ -17,10 +17,10 @@
 var settings = require('settings/root'), // module auto-generated
     url = require('url'),
     db = require('db'),
-    utils = require('kanso/utils'),
+    utils = require('./utils'),
     session = require('session'),
     cookies = require('cookies'),
-    events = require('kanso/events'),
+    events = require('./events'),
     urlParse = url.parse,
     urlFormat = url.format,
     _ = require('underscore')._,
@@ -49,7 +49,7 @@ if (settings.duality && settings.duality.base_template) {
 }
 
 /**
- * This is because the first page hit also triggers kanso to handle the url
+ * This is because the first page hit also triggers duality to handle the url
  * client-side. Knowing it is the first page being loaded means we can stop
  * the pageTracker code from submitting the URL twice. Exported because this
  * might be useful information to other modules, it should not be modified
@@ -84,7 +84,7 @@ exports.set_called = false;
 
 /**
  * This is set to true when the initial page request is to an unknown URL
- * rewrite target (such as a static .html page). This tells kanso whether to
+ * rewrite target (such as a static .html page). This tells duality whether to
  * handle urls internally or let the browser refresh the page when clicking
  * links etc
  */
@@ -184,15 +184,12 @@ if (settings.load) {
     // load dependencies of root app
     loadDeps(settings.dependencies);
 
-    // TODO: update kanso-core postprocessor to properly wrap show functions etc
-    // from deps (like I've updated the properties postprocessor here)
-
     exports._rewrites = _.flatten(exports._rewrites);
 }
 
 
 /**
- * Called by kanso.js once the design doc has been loaded.
+ * Called by duality.js once the design doc has been loaded.
  */
 
 exports.init = function () {
@@ -1134,8 +1131,9 @@ exports.handle = function (method, url, data) {
                 else {
                     exports.unknown_target = true;
                     console.log(
-                        'Initial hit is an uknown rewrite target, kanso will ' +
-                        'not fetch from server in order to avoid redirect loop'
+                        'Initial hit is an uknown rewrite target, duality ' +
+                        'will not fetch from server in order to avoid ' +
+                        'redirect loop'
                     );
                 }
             }
@@ -1349,3 +1347,13 @@ exports.isAppURL = function (url) {
     }
     return p.substr(0, base.length + 1) === base + '/';
 };
+
+
+// make sure currentRequest() always provided the latest session information
+events.on('sessionChange', function (userCtx, req) {
+    var curr_req = utils.currentRequest();
+    if (curr_req) {
+        curr_req.userCtx = userCtx;
+        utils.currentRequest(curr_req);
+    }
+});

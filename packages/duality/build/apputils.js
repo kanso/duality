@@ -3,7 +3,7 @@ var utils = require('kanso/utils');
 
 exports.proxyShowFn = function (path, app, doc, props) {
     var str = 'function(doc, req){' +
-        'var core = require("kanso/core");' +
+        'var core = require("duality/core");' +
         'var fn = require("' + path.replace('"', '\\"') + '")';
     for (var i = 0; i < props.length; i++) {
         str += '["' + props[i].replace('"', '\\"') + '"]';
@@ -16,7 +16,7 @@ exports.proxyShowFn = function (path, app, doc, props) {
 
 exports.proxyUpdateFn = function (path, app, doc, props) {
     var str = 'function(doc, req){' +
-        'var core = require("kanso/core");' +
+        'var core = require("duality/core");' +
         'var fn = require("' + path.replace('"', '\\"') + '")';
     for (var i = 0; i < props.length; i++) {
         str += '["' + props[i].replace('"', '\\"') + '"]';
@@ -31,7 +31,7 @@ exports.proxyUpdateFn = function (path, app, doc, props) {
 
 exports.proxyListFn = function (path, app, doc, props) {
     var str = 'function(head, req){' +
-        'var core = require("kanso/core");' +
+        'var core = require("duality/core");' +
         'var fn = require("' + path.replace('"', '\\"') + '")';
     for (var i = 0; i < props.length; i++) {
         str += '["' + props[i].replace('"', '\\"') + '"]';

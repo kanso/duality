@@ -1,9 +1,9 @@
 {
-    "name": "kanso-core",
+    "name": "duality",
     "version": "0.0.9",
-    "description": "The central part of the Kanso framework. Implements the CouchDB design doc API in the browser and handles the dispatching of URLs",
-    "modules": "kanso",
-    "attachments": "kanso.js",
+    "description": "The central part of the Duality framework. Implements the CouchDB design doc API in the browser and handles the dispatching of URLs",
+    "modules": "duality",
+    "attachments": "duality.js",
     "dependencies": {
         "settings": null,
         "modules": null,
@@ -12,10 +12,9 @@
         "underscore": null,
         "url": null,
         "db": ">=0.0.8",
-        "kanso-utils": null,
         "session": null,
         "cookies": null,
-        "kanso-events": null
+        "events": null
     },
     "postprocessors": {
         "queue": "build/queue",

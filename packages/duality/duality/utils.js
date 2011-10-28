@@ -1,9 +1,10 @@
-/*global window: false, __kansojs_current_request: true*/
+/*global window: false, __duality_current_request: true*/
 
 
 /**
- * General utility functions used by Kanso. Some functions were moved here from
- * other modules (such as core), to avoid a circular dependency bug in CouchDB.
+ * General utility functions used by duality. Some functions were moved here
+ * from other modules (such as core), to avoid a circular dependency bug in
+ * CouchDB.
  *
  * This module also stores some useful properties such as 'isBrowser', which is
  * true if the code is running in a browser environment, and 'initial_hit' which
@@ -18,7 +19,6 @@
  */
 
 var settings = require('settings/root'), // settings module is auto-generated
-    events = require('kanso/events'),
     _ = require('underscore')._;
 
 
@@ -44,24 +44,16 @@ exports.isBrowser = function () {
 
 exports.currentRequest = function (v) {
     if (v) {
-        __kansojs_current_request = v;
-    } else if (typeof(__kansojs_current_request) === 'undefined') {
-        __kansojs_current_request = null;
+        __duality_current_request = v;
+    } else if (typeof(__duality_current_request) === 'undefined') {
+        __duality_current_request = null;
     }
-    return __kansojs_current_request;
+    return __duality_current_request;
 };
 
-// make sure currentRequest() always provided the latest session information
-events.on('sessionChange', function (userCtx, req) {
-    var curr_req = exports.currentRequest();
-    if (curr_req) {
-        curr_req.userCtx = userCtx;
-        exports.currentRequest(curr_req);
-    }
-});
 
 /**
- * This is because the first page hit also triggers kanso to handle the url
+ * This is because the first page hit also triggers duality to handle the url
  * client-side. Knowing it is the first page being loaded means we can stop
  * the pageTracker code from submitting the URL twice. Exported because this
  * might be useful information to other modules, it should not be modified

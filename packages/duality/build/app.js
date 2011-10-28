@@ -21,7 +21,7 @@ function load(module_cache, doc, settings) {
     return doc;
 };
 
-// TODO: loop through doc._kanso_core_load keys and update each like above,
+// TODO: loop through doc._duality_core_load keys and update each like above,
 // see packages/load postprocessor for more details
 
 module.exports = {
@@ -29,13 +29,13 @@ module.exports = {
     run: function (root, path, settings, doc, callback) {
         var module_cache = {};
 
-        for (var k in doc._kanso_core_load) {
-            if (doc._kanso_core_load[k] && doc._kanso_core_load[k].load) {
+        for (var k in doc._duality_core_load) {
+            if (doc._duality_core_load[k] && doc._duality_core_load[k].load) {
 
-                // check that this package wants its exports wrapped by kanso-core
-                if ('kanso-core' in doc._kanso_core_load[k].dependencies || {}) {
+                // check that this package wants its exports wrapped by duality
+                if ('duality' in doc._duality_core_load[k].dependencies || {}) {
                     try {
-                        load(module_cache, doc, doc._kanso_core_load[k]);
+                        load(module_cache, doc, doc._duality_core_load[k]);
                     }
                     catch (e) {
                         return callback(e);
@@ -45,17 +45,15 @@ module.exports = {
             }
         }
 
-        doc.format = 'kanso';
-
-        // prepend required kanso rewrites and flatten
+        // prepend required duality rewrites and flatten
         doc.rewrites = _.flatten([
             {from: '/modules.js', to: 'modules.js'},
-            {from: '/kanso.js', to: 'kanso.js'},
+            {from: '/duality.js', to: 'duality.js'},
             {from: '/_db/*', to: '../../*'},
             {from: '/_db', to: '../..'}
         ].concat(doc.rewrites || []));
 
-        delete doc._kanso_core_load;
+        delete doc._duality_core_load;
         callback(null, doc);
     }
 };

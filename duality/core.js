@@ -566,6 +566,9 @@ exports.handleResponse = function (req, res) {
 exports.runShowBrowser = function (req, name, docid, callback) {
     var result;
     var fn = exports._shows[name];
+    if (!fn) {
+        throw new Error('Unknown show function: ' + name);
+    }
 
     var info = {
         type: 'show',
@@ -754,6 +757,9 @@ exports.runShow = function (fn, doc, req) {
 exports.runUpdateBrowser = function (req, name, docid, callback) {
     var result;
     var fn = exports._updates[name];
+    if (!fn) {
+        throw new Error('Unknown update function: ' + name);
+    }
 
     var info = {
         type: 'update',
@@ -910,6 +916,9 @@ exports.createHead = function (data) {
 
 exports.runListBrowser = function (req, name, view, callback) {
     var fn = exports._lists[name];
+    if (!fn) {
+        throw new Error('Unknown list function: ' + name);
+    }
 
     var info = {
         type: 'list',

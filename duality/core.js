@@ -234,8 +234,9 @@ exports.init = function () {
 
         $('a').live('click', function (ev) {
             var href = $(this).attr('href');
+            var rel = $(this).attr('rel');
 
-            if (href && exports.isAppURL(href)) {
+            if (href && exports.isAppURL(href) && rel !== 'external') {
                 var url = exports.appPath(href);
                 ev.preventDefault();
                 var match = exports.matchURL('GET', url);

@@ -145,6 +145,7 @@ exports._updates = {};
 
 
 function loadDeps(deps) {
+    log('loadDeps');
     // TODO: ignore deps already merged in
     if (!deps) {
         return;
@@ -152,6 +153,7 @@ function loadDeps(deps) {
     for (var k in deps) {
         var s = null;
         try {
+            log('loading settings/packages/' + k);
             s = require('settings/packages/' + k);
         }
         catch (e) {
@@ -175,17 +177,17 @@ function loadDeps(deps) {
         }
     }
 }
-if (settings.load) {
-    // load root app
-    var tmp = {};
-    tmp[settings.name] = null;
-    loadDeps(tmp);
 
-    // load dependencies of root app
-    loadDeps(settings.dependencies);
 
-    exports._rewrites = _.flatten(exports._rewrites);
-}
+// load root app
+var tmp = {};
+tmp[settings.name] = null;
+loadDeps(tmp);
+
+// load dependencies of root app
+loadDeps(settings.dependencies);
+
+exports._rewrites = _.flatten(exports._rewrites);
 
 
 /**

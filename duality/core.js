@@ -145,7 +145,6 @@ exports._updates = {};
 
 
 function loadDeps(deps) {
-    log('loadDeps');
     // TODO: ignore deps already merged in
     if (!deps) {
         return;
@@ -153,7 +152,6 @@ function loadDeps(deps) {
     for (var k in deps) {
         var s = null;
         try {
-            log('loading settings/packages/' + k);
             s = require('settings/packages/' + k);
         }
         catch (e) {

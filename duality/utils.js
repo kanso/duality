@@ -19,6 +19,7 @@
  */
 
 var settings = require('settings/root'), // settings module is auto-generated
+    cookies = require('cookies'),
     _ = require('underscore')._;
 
 
@@ -118,6 +119,10 @@ exports.getBaseURL = function (/*optional*/req) {
         return settings.baseURL;
     }
     if (exports.isBrowser()) {
+
+        var baseURL = cookies.readBrowserCookie('baseURL');
+        if (baseURL) return baseURL;
+
         var re = new RegExp('(.*\\/_rewrite).*$');
         var match = re.exec(exports.getWindowLocation().pathname);
         if (match) {

@@ -739,6 +739,14 @@ exports.runShow = function (fn, doc, req) {
 
     if (flashmessages) {
         res = flashmessages.updateResponse(req, res);
+    } else {
+        // set the baseURL cookie for the browser
+        var baseURL = utils.getBaseURL(req);
+        cookies.setResponseCookie(req, res, {
+            name: 'baseURL',
+            value : baseURL,
+            path : baseURL
+        });
     }
     req.response_received = true;
     return res;
@@ -864,6 +872,14 @@ exports.runUpdate = function (fn, doc, req, cb) {
 
     if (flashmessages) {
         res = flashmessages.updateResponse(req, res);
+    } else {
+            // set the baseURL cookie for the browser
+            var baseURL = utils.getBaseURL(req);
+            cookies.setResponseCookie(req, res, {
+                name: 'baseURL',
+                value : baseURL,
+                path : baseURL
+            });
     }
     var r = [val ? val[0]: null, res];
     if (req.client && r[0]) {
@@ -1014,6 +1030,14 @@ exports.runList = function (fn, head, req) {
         }
         if (flashmessages) {
             res = flashmessages.updateResponse(req, res);
+        } else {
+                // set the baseURL cookie for the browser
+                var baseURL = utils.getBaseURL(req);
+                cookies.setResponseCookie(req, res, {
+                    name: 'baseURL',
+                    value : baseURL,
+                    path : baseURL
+                });
         }
         _start(res);
     };

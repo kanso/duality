@@ -121,7 +121,8 @@ exports.getBaseURL = function (/*optional*/req) {
     if (exports.isBrowser()) {
 
         var baseURL = cookies.readBrowserCookie('baseURL');
-        if (baseURL) return baseURL;
+        if (baseURL && baseURL.length > 0) return baseURL;
+
 
         var re = new RegExp('(.*\\/_rewrite).*$');
         var match = re.exec(exports.getWindowLocation().pathname);
@@ -130,6 +131,31 @@ exports.getBaseURL = function (/*optional*/req) {
         }
         return '';
     }
+    if (req.headers['x-couchdb-vhost-path']) {
+        // in the future, when https://issues.apache.org/jira/browse/COUCHDB-1416 is fixed,
+        // we need to look at requested path to see if we are on the root or a path of the vhost
+        //var requestedPath = req.requested_path;
+        if (req.headers['x-couchdb-requested-path']) {
+            var fullPath = req.headers['x-couchdb-requested-path'];
+            fullPath = fullPath.substring(0, fullPath.indexOf('/_design/'));
+            return fullPath;
+        } else {
+            // we have no information. we have to assume the vhost is the same as the db name
+            return '/' + req.info.db_name;
+        }
+    }
+
+    if (req.headers['x-couchdb-requested-path']) {
+
+        var fullPath = req.headers['x-couchdb-requested-path'];
+        if (fullPath.indexOf('/_design/') >= 0 ) {
+            var endIndex = fullPath.indexOf('/_rewrite/') + 9;
+            fullPath = fullPath.substring(0, endIndex);
+            return fullPath
+        }
+    }
+
+
     if (req.query.baseURL) {
         return req.query.baseURL;
     }
@@ -137,12 +163,6 @@ exports.getBaseURL = function (/*optional*/req) {
         return '/' + req.query.db + '/_design/' + req.query.ddoc + '/_rewrite/';
     }
 
-    if (_.include(req.path, '_rewrite')) {
-        return '/' + req.path.slice(0, 3).join('/') + '/_rewrite';
-    }
-    if (req.headers['x-couchdb-vhost-path']) {
-        return '';
-    }
     return '/' + req.path.slice(0, 3).join('/') + '/_rewrite';
 };
 

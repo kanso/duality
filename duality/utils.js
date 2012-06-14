@@ -135,9 +135,14 @@ exports.getBaseURL = function (/*optional*/req) {
         // in the future, when https://issues.apache.org/jira/browse/COUCHDB-1416 is fixed,
         // we need to look at requested path to see if we are on the root or a path of the vhost
         //var requestedPath = req.requested_path;
-        var fullPath = req.headers['x-couchdb-requested-path'];
-        fullPath = fullPath.substring(0, fullPath.indexOf('/_design/'));
-        return fullPath;
+        if (req.headers['x-couchdb-requested-path']) {
+            var fullPath = req.headers['x-couchdb-requested-path'];
+            fullPath = fullPath.substring(0, fullPath.indexOf('/_design/'));
+            return fullPath;
+        } else {
+            // we have no information. we have to assume the vhost is the same as the db name
+            return '/' + req.info.db_name;
+        }
     }
 
     if (req.headers['x-couchdb-requested-path']) {

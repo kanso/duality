@@ -681,6 +681,29 @@ exports.parseResponse = function (req, res) {
 };
 
 /**
+ * Helper for runShow/runList/runUpdate.
+ *
+ * @name processFlashmessagesAndCookies (req, res)
+ * @param {Object} req
+ * @param {Object} res
+ * @api public
+ */
+
+exports.processFlashmessagesAndCookies = function (req, res) {
+    if (flashmessages) {
+        res = flashmessages.updateResponse(req, res);
+    } else {
+        // set the baseURL cookie for the browser
+        var baseURL = utils.getBaseURL(req);
+        cookies.setResponseCookie(req, res, {
+            name: 'baseURL',
+            value : baseURL,
+            path : baseURL
+        });
+    }
+};
+
+/**
  * Runs a show function with the given document and request object,
  * emitting relevant events. This function runs both server and client-side.
  *
@@ -715,17 +738,7 @@ exports.runShow = function (fn, doc, req) {
     events.emit('beforeResponseStart', info, req, res);
     events.emit('beforeResponseData', info, req, res, res.body || '');
 
-    if (flashmessages) {
-        res = flashmessages.updateResponse(req, res);
-    } else {
-        // set the baseURL cookie for the browser
-        var baseURL = utils.getBaseURL(req);
-        cookies.setResponseCookie(req, res, {
-            name: 'baseURL',
-            value : baseURL,
-            path : baseURL
-        });
-    }
+    exports.processFlashmessagesAndCookies(req, res);
     req.response_received = true;
     return res;
 };
@@ -847,18 +860,7 @@ exports.runUpdate = function (fn, doc, req, cb) {
     }
     events.emit('beforeResponseStart', info, req, res);
     events.emit('beforeResponseData', info, req, res, res.body || '');
-
-    if (flashmessages) {
-        res = flashmessages.updateResponse(req, res);
-    } else {
-            // set the baseURL cookie for the browser
-            var baseURL = utils.getBaseURL(req);
-            cookies.setResponseCookie(req, res, {
-                name: 'baseURL',
-                value : baseURL,
-                path : baseURL
-            });
-    }
+    exports.processFlashmessagesAndCookies(req, res);
     var r = [val ? val[0]: null, res];
     if (req.client && r[0]) {
         var appdb = db.use(exports.getDBURL(req));
@@ -1006,17 +1008,7 @@ exports.runList = function (fn, head, req) {
         if (res.body) {
             events.emit('beforeResponseData', info, req, res, res.body);
         }
-        if (flashmessages) {
-            res = flashmessages.updateResponse(req, res);
-        } else {
-                // set the baseURL cookie for the browser
-                var baseURL = utils.getBaseURL(req);
-                cookies.setResponseCookie(req, res, {
-                    name: 'baseURL',
-                    value : baseURL,
-                    path : baseURL
-                });
-        }
+        exports.processFlashmessagesAndCookies(req, res);
         _start(res);
     };
     var _send = send;

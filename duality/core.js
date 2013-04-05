@@ -691,40 +691,6 @@ exports.parseResponse = function (req, res) {
  * @api public
  */
 
-exports.parseResponse = function (req, res) {
-    var ids = _.without(_.keys(res), 'title', 'code', 'headers', 'body');
-    if (req.client) {
-        if (res.title) {
-            document.title = res.title;
-        }
-        _.each(ids, function (id) {
-            $('#' + id).html(res[id]);
-        });
-    }
-    else if (!res.body) {
-        var context = {title: res.title || ''};
-        _.each(ids, function (id) {
-            context[id] = res[id];
-        });
-        if (!templates) {
-            throw new Error(
-                'Short-hand response style requires templates module'
-            );
-        }
-        var body = templates.render(BASE_TEMPLATE, req, context);
-        res = {
-            body: body,
-            code: res.code || 200,
-            headers: res.headers
-        };
-    }
-    return {
-        body: res.body,
-        code: res.code,
-        headers: res.headers
-    };
-};
-
 exports.runShow = function (fn, doc, req) {
     if (flashmessages) {
         req = flashmessages.updateRequest(req);

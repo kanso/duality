@@ -740,7 +740,8 @@ exports.runShow = function (fn, doc, req) {
     events.emit('beforeRequest', info, req);
     var res = fn(doc, req);
 
-    if (!(res instanceof Object)) {
+    // For some reason using instanceof on libmozjs can be return true or false at different times
+    if ( ! (res instanceof Object || typeof(res) === 'object')  ) {
         res = {code: 200, body: res};
     }
     else {
@@ -873,7 +874,7 @@ exports.runUpdate = function (fn, doc, req, cb) {
     var val = fn(doc, req);
 
     var res = val ? val[1]: null;
-    if (!(res instanceof Object)) {
+    if ( ! (res instanceof Object  || typeof(res) === 'object') ) {
         res = {code: 200, body: res};
     }
     else {
@@ -1067,7 +1068,7 @@ exports.runList = function (fn, head, req) {
     events.emit('beforeRequest', info, req);
     var val = fn(head, req);
 
-    if (val instanceof Object) {
+    if (val instanceof Object || typeof(val) === 'object'){
         val = exports.parseResponse(req, val).body;
     }
     if (!start_res) {

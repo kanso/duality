@@ -197,7 +197,7 @@ exports.init = function () {
     if (window.history && history.pushState) {
         exports.history_support = true;
 
-        $('form').live('submit', function (ev) {
+		$(document).on('submit', 'form', function (ev) {
             var action = $(this).attr('action');
             var method = $(this).attr('method').toUpperCase();
 
@@ -232,7 +232,7 @@ exports.init = function () {
             return false;
         });
 
-        $('a').live('click', function (ev) {
+		$(document).on('click', 'a', function (ev) {
             var href = $(this).attr('href');
             var rel = $(this).attr('rel');
 
@@ -740,8 +740,7 @@ exports.runShow = function (fn, doc, req) {
     events.emit('beforeRequest', info, req);
     var res = fn(doc, req);
 
-    // For some reason using instanceof on libmozjs can be return true or false at different times
-    if ( ! (res instanceof Object || typeof(res) === 'object')  ) {
+    if (!(res instanceof Object)) {
         res = {code: 200, body: res};
     }
     else {
@@ -874,7 +873,7 @@ exports.runUpdate = function (fn, doc, req, cb) {
     var val = fn(doc, req);
 
     var res = val ? val[1]: null;
-    if ( ! (res instanceof Object  || typeof(res) === 'object') ) {
+    if (!(res instanceof Object)) {
         res = {code: 200, body: res};
     }
     else {
@@ -1068,7 +1067,7 @@ exports.runList = function (fn, head, req) {
     events.emit('beforeRequest', info, req);
     var val = fn(head, req);
 
-    if (val instanceof Object || typeof(val) === 'object'){
+    if (val instanceof Object) {
         val = exports.parseResponse(req, val).body;
     }
     if (!start_res) {

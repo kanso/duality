@@ -1056,12 +1056,14 @@ exports.runList = function (fn, head, req) {
     };
     var _send = send;
     send = function (data) {
-        if (!start_res.body) {
-            start_res.body = '';
-        }
-        // TODO: does it make sense to store data here and use up memory
-        // on the server?
-        start_res.body += data;
+        if(start_res) {
+	  if (!start_res.body) {
+              start_res.body = '';
+          }
+          // TODO: does it make sense to store data here and use up memory
+          // on the server?
+          start_res.body += data;
+	}
         events.emit('beforeResponseData', info, req, start_res, data);
         _send(data);
     };

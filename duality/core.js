@@ -92,19 +92,18 @@ exports.set_called = false;
 exports.unknown_target = false;
 
 
-if (typeof window !== 'undefined') {
-    if (!window.console) {
-        // console.log is going to cause errors, just stub the functions
-        // for now. TODO: add logging utility for IE?
-        window.console = {
-            log: function () {},
-            error: function () {},
-            info: function () {},
-            warn: function () {}
-        };
-    }
-    var console = window.console;
-}
+// console.log is going to cause errors, just stub the functions
+// for now. TODO: add logging utility for IE?
+var console = {
+    log: function () {},
+    error: function () {},
+    info: function () {},
+    warn: function () {}
+};
+
+// reassign console if in the browser
+if (typeof window !== 'undefined' && window.console)
+    console = window.console;
 
 
 /**
@@ -236,9 +235,8 @@ exports.init = function () {
             var href = $(this).attr('href');
             var rel = $(this).attr('rel');
 
-            if (/#[A-Za-z_\-:\.]+/.test(href)) {
-                exports._in_page = true;
-                // in-page anchor
+            exports._in_page = /#[A-Za-z_\-:\.]+/.test(href);
+            if (exports._in_page) { // in-page anchor
                 return;
             }
             console.log('no in-page anchor');
